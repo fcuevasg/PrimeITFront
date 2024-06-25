@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Duty } from '../interfaces/Duty';
 import { Button, Flex } from 'antd';
 import { CheckOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
