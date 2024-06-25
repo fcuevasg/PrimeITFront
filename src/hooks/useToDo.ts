@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
 import { Duty } from '../interfaces/Duty';
-import { createToDo, fetchToDos, updateToDo as updateToDoFromDB } from '../services/ToDoService';
+import {
+  createToDo,
+  fetchToDos,
+  deleteToDo as deleteToDoFromDB,
+  updateToDo as updateToDoFromDB,
+} from '../services/ToDoService';
 
 export const useToDo = () => {
   const [Duty, setDuty] = useState<Duty[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const loadToDos = async () => {
@@ -18,29 +24,32 @@ export const useToDo = () => {
         setLoading(false);
       }
     };
-    console.log("Estoy refrescando")
+    console.log("it's loading todo's");
     loadToDos();
-  }, []);
+  }, [refresh]);
 
   const addToDo = async (duty: Duty) => {
     try {
       const newDuty = await createToDo(duty);
       setDuty((prevDuty) => [...prevDuty, newDuty]);
+      setRefresh(!refresh);
     } catch (err) {
       setError('Failed to add duty');
     }
   };
 
-  const deleteToDo = async (id: string) => {
+  const deleteToDo = async (id: number) => {
+    console.log("DELETING EN USETODO", id)
     try {
-      await deleteToDo(id);
+      await deleteToDoFromDB(id);
       setDuty((prevDuty) => prevDuty.filter((duty) => duty.id !== id));
+      setRefresh(!refresh);
     } catch (err) {
       setError('Failed to delete duty');
     }
   };
 
-  const updateToDo = async (id: string, duty: Duty) => {
+  const updateToDo = async (id: number, duty: Duty) => {
     try {
       const updatedDuty = await updateToDoFromDB(id, duty);
       setDuty(
@@ -49,6 +58,7 @@ export const useToDo = () => {
             duty.id === id ? updatedDuty : duty,
           ) as Duty[],
       );
+      setRefresh(!refresh);
     } catch (err) {
       setError('Failed to update duty');
     }
@@ -58,9 +68,8 @@ export const useToDo = () => {
     Duty,
     loading,
     error,
-     addToDo,
+    addToDo,
     deleteToDo,
     updateToDo,
-
   };
 };

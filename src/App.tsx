@@ -4,9 +4,9 @@ import HomePage from './pages/homePage';
 
 function App() {
   return (
-    <ToDoContextProvider>
-      <HomePage />
-    </ToDoContextProvider>
+    // <ToDoContextProvider>
+    <HomePage />
+    // </ToDoContextProvider>
   );
 }
 

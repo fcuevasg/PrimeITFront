@@ -1,18 +1,14 @@
 import { Avatar, Button, List } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { Duty } from '../interfaces/Duty';
-import { useToDo } from '../hooks/useToDo';
+import { ListButtonProps } from './ListButtons';
 
-const DoneList: React.FC = () => {
-  const handleDeleteClick = (index: number) => {
-    if (index === -1) return;
-    const dutyId = Duty[index]?.id;
-    if (dutyId) {
-      updateToDo(dutyId, { ...Duty[index], deleted: true });
-    }
-  };
+interface DoneListProps extends ListButtonProps {
+  Duty: Duty[];
+}
 
-  const { Duty, updateToDo } = useToDo();
+const DoneList: React.FC<DoneListProps> = (props: DoneListProps) => {
+  const { Duty, onDelete } = props;
 
   return (
     <List
@@ -34,7 +30,7 @@ const DoneList: React.FC = () => {
             danger
             icon={<DeleteOutlined />}
             iconPosition="end"
-            onClick={() => handleDeleteClick(index)}
+            onClick={() => onDelete && onDelete(item)}
           ></Button>
         </List.Item>
       )}

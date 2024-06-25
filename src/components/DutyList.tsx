@@ -1,106 +1,41 @@
-import { Button, List, Modal } from 'antd';
-import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
+import { List } from 'antd';
 import { Duty } from '../interfaces/Duty';
-import ToDoInput from './ToDoInput';
-import { useToDo } from '../hooks/useToDo';
+import ListButton, { ListButtonProps } from './ListButtons';
 
-const handleEdit = (
-  contents: string,
-  index: number,
-  updateToDo: any,
-  Duty: Duty[],
-  closeModal: any,
-) => {
-  if (index === -1) return;
-  updateToDo(Duty[index].id, { ...Duty[index], name: contents });
-  closeModal();
-};
+interface DutyListProps extends ListButtonProps {
+  Duty: Duty[];
+}
 
-const DutyList: React.FC = () => {
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { Duty, updateToDo } = useToDo();
+const DutyList: React.FC<DutyListProps> = (props: DutyListProps) => {
+  const { Duty, onComplete, onDelete, onEdit } = props;
 
-  useEffect(() => {
-    console.log("Test dependencia 2")
-  }, [Duty]);
-
-
-
-  const showModal = () => {
-    setIsModalOpen(true);
+  const renderItem = (item: Duty) => {
+    return (
+      <div>
+        <List.Item>
+          <List.Item.Meta
+            title={<a href="https://ant.design">{item.name}</a>}
+            description={item.done ? 'Completed' : 'In progress'}
+          />
+          <ListButton
+            onComplete={() => onComplete && onComplete(item)}
+            onDelete={() => onDelete && onDelete(item)}
+            onEdit={() => onEdit && onEdit(item)}
+            selectedItem={item}
+          ></ListButton>
+        </List.Item>
+      </div>
+    );
   };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleDeleteClick = (index: number) => {
-    if (index === -1) return;
-    const duty = Duty[index];
-    if (duty.id !== undefined) {
-      updateToDo(duty.id, { ...duty, deleted: true });
-    }
-  };
-
-  const handleCompleteClick = (index: number) => {
-    if (index === -1) return;
-    const duty = Duty[index];
-    if (duty.id !== undefined) {
-      updateToDo(duty.id, { ...duty, done: true });
-    }
-  };
-
-  const handleEditClick = (index: number) => {
-    setSelectedIndex(index);
-    showModal();
-  };
-
-  const renderItem = (item: Duty, index: number) => (
-    <List.Item>
-      <List.Item.Meta
-        title={<a href="https://ant.design">{item.name}</a>}
-        description={item.done ? 'Completed' : 'In progress'}
-      />
-
-      <Button
-        type="primary"
-        icon={<CheckOutlined />}
-        iconPosition="end"
-        onClick={() => handleCompleteClick(index)}
-      ></Button>
-
-      <Button
-        icon={<EditOutlined />}
-        iconPosition="end"
-        onClick={() => handleEditClick(index)}
-      ></Button>
-      <Button
-        danger
-        icon={<DeleteOutlined />}
-        iconPosition="end"
-        onClick={() => handleDeleteClick(index)}
-      ></Button>
-    </List.Item>
-  );
 
   return (
     <div>
       <List
         itemLayout="horizontal"
-        dataSource={Duty.filter((_duty) => !_duty.done && !_duty.deleted)}
+        dataSource={Duty?.filter((_duty) => !_duty.done && !_duty.deleted)}
         renderItem={renderItem}
       />
-      <Modal title="Basic Modal" open={isModalOpen} footer={[]}>
-        <ToDoInput
-          onAdd={(contents) =>
-            handleEdit(contents, selectedIndex, updateToDo, Duty, closeModal)
-          }
-        ></ToDoInput>
-      </Modal>
     </div>
   );
 };
-
 export default DutyList;

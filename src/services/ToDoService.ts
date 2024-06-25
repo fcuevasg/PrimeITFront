@@ -14,11 +14,11 @@ export const fetchToDos = async (): Promise<Duty[]> => {
   return response.data;
 };
 
-export const deleteToDo = async (id: string): Promise<void> => {
+export const deleteToDo = async (id: number): Promise<void> => {
   await axios.delete(`${API_URL}/${id}`);
 };
 
-export const updateToDo = async (id: string, duty: Duty): Promise<Duty> => {
+export const updateToDo = async (id: number, duty: Duty): Promise<Duty> => {
   const response = await axios.put<Duty>(`${API_URL}/${id}`, { ...duty });
   return response.data;
 };
