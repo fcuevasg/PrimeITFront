@@ -5,6 +5,7 @@ import { ListButtonProps } from './ListButtons';
 
 interface DoneListProps extends ListButtonProps {
   Duty: Duty[];
+  loading?: boolean;
 }
 
 const DoneList: React.FC<DoneListProps> = (props: DoneListProps) => {
@@ -12,18 +13,19 @@ const DoneList: React.FC<DoneListProps> = (props: DoneListProps) => {
 
   return (
     <List
+      loading={props.loading}
       itemLayout="horizontal"
       dataSource={Duty.filter((duty) => duty.done && !duty.deleted)}
-      renderItem={(item: Duty, index) => (
+      renderItem={(item: Duty) => (
         <List.Item>
           <List.Item.Meta
             avatar={
               <Avatar
-                src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${index}`}
+                src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${item.name}`}
               />
             }
-            title={<a href="https://ant.design">{item.name}</a>}
-            description={item.id}
+            title={item.name}
+            description={item.done ? 'Done' : 'Pending'}
           />
 
           <Button

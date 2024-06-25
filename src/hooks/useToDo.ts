@@ -24,7 +24,6 @@ export const useToDo = () => {
         setLoading(false);
       }
     };
-    console.log("it's loading todo's");
     loadToDos();
   }, [refresh]);
 
@@ -39,7 +38,6 @@ export const useToDo = () => {
   };
 
   const deleteToDo = async (id: number) => {
-    console.log("DELETING EN USETODO", id)
     try {
       await deleteToDoFromDB(id);
       setDuty((prevDuty) => prevDuty.filter((duty) => duty.id !== id));

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Duty } from '../interfaces/Duty';
-import { Button } from 'antd';
+import { Button, Flex } from 'antd';
 import { CheckOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
 export interface ListButtonProps {
@@ -17,7 +17,7 @@ export interface ListButtonProps {
 const ListButton: React.FC<ListButtonProps> = (props: ListButtonProps) => {
   const { showEdit = true, showDelete = true, showComplete = true } = props;
   return (
-    <div>
+    <Flex gap="small" >
       {showComplete ? (
         <Button
           type="primary"
@@ -49,7 +49,7 @@ const ListButton: React.FC<ListButtonProps> = (props: ListButtonProps) => {
       ) : (
         <></>
       )}
-    </div>
+    </Flex>
   );
 };
 

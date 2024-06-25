@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Input, Button } from 'antd';
+import { Input, Button, Flex } from 'antd';
 
 interface ToDoInputProps {
   onAdd: (text: string) => void;
+  loading?: boolean;
 }
 
-const ToDoInput: React.FC<ToDoInputProps> = ({ onAdd }) => {
+const ToDoInput: React.FC<ToDoInputProps> = ({ onAdd, loading }) => {
   const [text, setText] = useState('');
-  
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
@@ -21,12 +21,16 @@ const ToDoInput: React.FC<ToDoInputProps> = ({ onAdd }) => {
   };
 
   return (
-    <div>
-      <Input value={text} onChange={handleInputChange} />
-      <Button type="primary" onClick={handleAddClick}>
+    <Flex gap="middle">
+      <Input
+        value={text}
+        onChange={handleInputChange}
+        placeholder="Insert a new ToDo"
+      />
+      <Button type="primary" onClick={handleAddClick} loading={loading}>
         Add
       </Button>
-    </div>
+    </Flex>
   );
 };
 

@@ -1,36 +1,60 @@
-import React, { useState } from 'react';
-import { Modal, Tabs, TabsProps } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Flex, Modal, notification, Tabs, TabsProps } from 'antd';
 import DutyList from '../components/DutyList';
 import ToDoInput from '../components/ToDoInput';
 import DoneList from '../components/DoneList';
 import { useToDo } from '../hooks/useToDo';
 import { Duty } from '../interfaces/Duty';
+import Title from 'antd/es/typography/Title';
+
+type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
 const homePage: React.FC = () => {
-  const { addToDo, Duty: duties, deleteToDo, updateToDo } = useToDo();
+  const {
+    addToDo,
+    Duty: duties,
+    deleteToDo,
+    updateToDo,
+    loading,
+    error,
+  } = useToDo();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedDuty, setSelectedDuty] = useState<Duty | undefined>(undefined);
 
+  // Functions for handling the actions
   const onEdit = (item: Duty | undefined) => {
     setSelectedDuty(item);
     showModal();
   };
-
   const showModal = () => {
     setIsModalOpen(true);
   };
-
   const closeModal = () => {
     setIsModalOpen(false);
   };
-
   const onDelete = (item: Duty | undefined) => {
-    console.log('deleting', item);
     if (item && item.id) deleteToDo(item.id);
   };
   const onComplete = (item: Duty | undefined) => {
     if (item && item.id) updateToDo(item.id, { ...item, done: true });
   };
+
+  //Notifications
+
+  const [api, contextHolder] = notification.useNotification();
+
+  const openNotificationWithIcon = (type: NotificationType) => {
+    api[type]({
+      message: 'Error occurred while trying to perform the action',
+      description: error,
+    });
+  };
+
+  useEffect(() => {
+    if (error) {
+      openNotificationWithIcon('error');
+    }
+  }, [error]);
 
   const items: TabsProps['items'] = [
     {
@@ -38,6 +62,7 @@ const homePage: React.FC = () => {
       label: 'In progress',
       children: (
         <DutyList
+          loading={loading}
           Duty={duties}
           onComplete={onComplete}
           onDelete={onDelete}
@@ -53,13 +78,20 @@ const homePage: React.FC = () => {
       key: '2',
       label: 'Done',
       children: (
-        <DoneList selectedItem={selectedDuty} Duty={duties} showDelete onDelete={onDelete} />
+        <DoneList
+          selectedItem={selectedDuty}
+          Duty={duties}
+          showDelete
+          onDelete={onDelete}
+        />
       ),
     },
   ];
 
   return (
-    <div>
+    <Flex vertical={true} gap="Large" >
+      {contextHolder}
+      <Title level={3} >ToDo's app by Javi</Title>
       <ToDoInput
         onAdd={(text) => {
           addToDo({ name: text, done: false, deleted: false });
@@ -67,7 +99,18 @@ const homePage: React.FC = () => {
       />
       <Tabs defaultActiveKey="1" items={items} />
 
-      <Modal title="Basic Modal" open={isModalOpen} footer={[]}>
+      <Modal
+        title="Basic Modal"
+        onClose={() => {
+          closeModal();
+        }}
+        closable={true}
+        onCancel={() => {
+          closeModal();
+        }}
+        open={isModalOpen}
+        footer={[]}
+      >
         <ToDoInput
           onAdd={(contents) => {
             if (selectedDuty && selectedDuty.id) {
@@ -79,9 +122,10 @@ const homePage: React.FC = () => {
               closeModal();
             }
           }}
+          loading={loading}
         ></ToDoInput>
       </Modal>
-    </div>
+    </Flex>
   );
 };
 
