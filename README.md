@@ -3,6 +3,12 @@
 Frontend made in react, using typescript and vite, using hexagonal architecture and hooks
 This project has unit tests using vitest
 
+![Screen](./screenshots/screen.png)
+![Screen](./screenshots/screen2.png)
+![Screen](./screenshots/screen3.png)
+
+
+
 ## Table of Contents
 
 - [Getting Started](#getting-started)
