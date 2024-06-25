@@ -1,4 +1,4 @@
-import { Avatar, Button, List, Modal } from 'antd';
+import { Button, List, Modal } from 'antd';
 import { CheckOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { Duty } from '../interfaces/Duty';
@@ -21,7 +21,13 @@ const DutyList: React.FC = () => {
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { Duty, updateToDo } = useToDo();
- 
+
+  useEffect(() => {
+    console.log("Test dependencia 2")
+  }, [Duty]);
+
+
+
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -30,9 +36,21 @@ const DutyList: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  const handleDeleteClick = (index: number) => {};
+  const handleDeleteClick = (index: number) => {
+    if (index === -1) return;
+    const duty = Duty[index];
+    if (duty.id !== undefined) {
+      updateToDo(duty.id, { ...duty, deleted: true });
+    }
+  };
 
-  const handleCompleteClick = (index: number) => {};
+  const handleCompleteClick = (index: number) => {
+    if (index === -1) return;
+    const duty = Duty[index];
+    if (duty.id !== undefined) {
+      updateToDo(duty.id, { ...duty, done: true });
+    }
+  };
 
   const handleEditClick = (index: number) => {
     setSelectedIndex(index);
@@ -69,7 +87,11 @@ const DutyList: React.FC = () => {
 
   return (
     <div>
-      <List itemLayout="horizontal" dataSource={Duty} renderItem={renderItem} />
+      <List
+        itemLayout="horizontal"
+        dataSource={Duty.filter((_duty) => !_duty.done && !_duty.deleted)}
+        renderItem={renderItem}
+      />
       <Modal title="Basic Modal" open={isModalOpen} footer={[]}>
         <ToDoInput
           onAdd={(contents) =>

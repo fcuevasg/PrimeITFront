@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Duty } from '../interfaces/Duty';
-import { createToDo, fetchToDos } from '../services/ToDoService';
+import { createToDo, fetchToDos, updateToDo as updateToDoFromDB } from '../services/ToDoService';
 
 export const useToDo = () => {
   const [Duty, setDuty] = useState<Duty[]>([]);
@@ -18,7 +18,7 @@ export const useToDo = () => {
         setLoading(false);
       }
     };
-
+    console.log("Estoy refrescando")
     loadToDos();
   }, []);
 
@@ -41,9 +41,8 @@ export const useToDo = () => {
   };
 
   const updateToDo = async (id: string, duty: Duty) => {
-    console.log("updating with: ", id, duty)
     try {
-      const updatedDuty = await updateToDo(id, duty);
+      const updatedDuty = await updateToDoFromDB(id, duty);
       setDuty(
         (prevDuty: Duty[]) =>
           prevDuty.map((duty) =>

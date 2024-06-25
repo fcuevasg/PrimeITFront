@@ -1,5 +1,5 @@
 export interface Duty{
-  id:string;
+  id?:string;
   name:string;
   done:boolean;
   deleted:boolean;

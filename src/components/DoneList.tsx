@@ -1,51 +1,23 @@
 import { Avatar, Button, List } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
-import { useEffect } from 'react';
 import { Duty } from '../interfaces/Duty';
+import { useToDo } from '../hooks/useToDo';
 
-interface DutyListProps {
-  DataState?: Duty[];
-  setDataState?: React.Dispatch<React.SetStateAction<Duty[]>>;
-}
+const DoneList: React.FC = () => {
+  const handleDeleteClick = (index: number) => {
+    if (index === -1) return;
+    const dutyId = Duty[index]?.id;
+    if (dutyId) {
+      updateToDo(dutyId, { ...Duty[index], deleted: true });
+    }
+  };
 
-const handleDelete = (
-  index: number,
-  setState: React.Dispatch<React.SetStateAction<Duty[]>>,
-) => {
-  setState((prevState) => prevState.filter((_, i) => i !== index));
-};
+  const { Duty, updateToDo } = useToDo();
 
-const handleCompleteTask = (index: number) => {
-  // TODO: set task to completed
-  console.log(index);
-};
-
-const handleEdit = (
-  contents: string,
-  index: number,
-  setState: React.Dispatch<React.SetStateAction<Duty[]>>,
-  closeModal: () => void,
-) => {
-  if (index === -1) return; //check if not selected
-  setState((prevState) => {
-    const updatedState = [...prevState];
-    updatedState[index].name = contents;
-    return updatedState;
-  });
-  closeModal();
-};
-
-const DoneList: React.FC<DutyListProps> = ({ DataState, setDataState }) => {
-  useEffect(() => {
-    // Load data here
-    console.log('Data loaded');
-  }, []);
-
-  //TODO: Add error handling for when DataState is undefined
   return (
     <List
       itemLayout="horizontal"
-      dataSource={DataState}
+      dataSource={Duty.filter((duty) => duty.done && !duty.deleted)}
       renderItem={(item: Duty, index) => (
         <List.Item>
           <List.Item.Meta
@@ -62,7 +34,7 @@ const DoneList: React.FC<DutyListProps> = ({ DataState, setDataState }) => {
             danger
             icon={<DeleteOutlined />}
             iconPosition="end"
-            onClick={() => handleDelete(index, setDataState!)}
+            onClick={() => handleDeleteClick(index)}
           ></Button>
         </List.Item>
       )}
